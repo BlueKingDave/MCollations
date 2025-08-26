@@ -7,8 +7,8 @@ export default defineConfig({
   name: 'default',
   title: 'MCollations',
 
-  projectId: 'uj4pt4gh',
-  dataset: 'production',
+  projectId: process.env.SANITY_STUDIO_PROJECT_ID!,
+  dataset: process.env.SANITY_STUDIO_DATASET!,
 
   plugins: [structureTool(), visionTool()],
 
