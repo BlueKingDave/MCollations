@@ -16,6 +16,7 @@ import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight } from "lucide-react"
+import ResponsiveCardGrid from '@/components/ui/ResponsiveCardGrid'
 
 
 // 👇 Aliases sémantiques
@@ -31,37 +32,28 @@ export default function HomePage() {
   const { openModal } = useContactModal()
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
 
-  // --- Sticky mini-nav + carousel sync (MOBILE) ---
-  const [activeReasonIndex, setActiveReasonIndex] = useState<number>(1) // start centered
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null)
+  const steps = [
+    {
+      step: "1",
+      title: "Remplir le Formulaire",
+      desc: "Parlez-nous de votre emplacement, de l'achalandage et de vos préférences. Nous voulons cerner vos besoins et votre réalité."
+    },
+    {
+      step: "2",
+      title: "Personnalisation du Service",
+      desc: "Nous vous contactons pour discuter des options de produits et des modalités de service pour trouver une formule gagnante-gagnante."
+    },
+    {
+      step: "3",
+      title: "Installation en 3 semaines",
+      desc: "Installation professionnelle, approvisionnement initial et configuration complétés en 3 semaines. Votre machine sera remplie et connectée dès le jour 1."
+    }
+  ]
 
   const scrollToServices = () => {
     const servicesSection = document.getElementById('services')
     if (servicesSection) servicesSection.scrollIntoView({ behavior: 'smooth' })
   }
-
-  // track active slide while swiping
-  const handleScroll = () => {
-    if (!scrollContainerRef.current) return
-    const el = scrollContainerRef.current
-    const cardWidth = el.clientWidth * 0.9 // matches w-[90vw]
-    const idx = Math.round(el.scrollLeft / cardWidth)
-    if (idx !== activeReasonIndex) setActiveReasonIndex(idx)
-  }
-
-  // jump to a specific slide (chip click)
-  const scrollToCard = (index: number) => {
-    if (!scrollContainerRef.current) return
-    const el = scrollContainerRef.current
-    const cardWidth = el.clientWidth * 0.9
-    el.scrollTo({ left: index * cardWidth, behavior: 'smooth' })
-    setActiveReasonIndex(index)
-  }
-
-  // center on the middle card initially
-  useEffect(() => {
-    if (scrollContainerRef.current) scrollToCard(1)
-  }, [])
 
   return (
     <>
@@ -94,60 +86,12 @@ export default function HomePage() {
           subtitle="Nos machines distributrices à Québec et Lévis offrent collations et breuvages à toute heure. Une valeur ajoutée à votre établissement, sans gestion ni main-d’œuvre de votre part."
         />
 
-        {/* Desktop: normal grid */}
-        <div className="hidden md:grid md:grid-cols-3 gap-8">
-          {reasons.map((reason, index) => (
-            <ReasonCard key={index} reason={reason} />
-          ))}
-        </div>
-
-        {/* Mobile: sticky mini-nav + horizontal snap carousel */}
-        <div className="md:hidden">
-          {/* Sticky MINI NAV (chips) */}
-          <div className="sticky top-16 z-30 mx-1">
-            <nav className="bg-white border-1 border-neutral-100 rounded-md shadow-sm overflow-hidden">
-              <ul className="flex justify-center gap-2 py-2 px-4">
-              {reasons.map((r, i) => {
-                const isActive = i === activeReasonIndex
-                return (
-                  <li key={`chip-${i}`}>
-                    <button
-                      type="button"
-                      onClick={() => scrollToCard(i)}
-                      aria-current={isActive ? 'true' : 'false'}
-                      className={`inline-flex items-center rounded-full px-3 py-1.5 text-sm transition border
-                        ${isActive
-                          ? r.icon === "Lightning" ? 'border-orange-300 bg-orange-100 text-orange-800' :
-                            r.icon === "Simple" ? 'border-green-300 bg-green-100 text-green-800' :
-                            r.icon === "Satisfaction" ? 'border-yellow-300 bg-yellow-100 text-yellow-800' :
-                            'border-emerald-500 bg-emerald-500/10 text-emerald-800'
-                          : 'border-neutral-200 bg-white text-neutral-700'
-                        }`}
-                    >
-                      {r?.title === "Énergie 24/7" ? "Énergie" : r?.title ?? `Pilier ${i + 1}`}
-                    </button>
-                  </li>
-                )
-              })}
-              </ul>
-            </nav>
-          </div>
-
-          {/* Horizontal CAROUSEL */}
-          <div
-            ref={scrollContainerRef}
-            onScroll={handleScroll}
-            className="mt-4 flex overflow-x-auto snap-x snap-mandatory space-x-4 px-4 scrollbar-hide"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            aria-label="Parcourir les piliers"
-          >
-            {reasons.map((reason, index) => (
-              <div key={index} className="flex-none snap-center w-[90vw]" aria-roledescription="slide">
-                <ReasonCard reason={reason} />
-              </div>
-            ))}
-          </div>
-        </div>
+        <ResponsiveCardGrid
+          items={reasons}
+          renderCard={(reason, index) => <ReasonCard key={index} reason={reason} />}
+          getItemTitle={(reason) => reason?.title === "Énergie 24/7" ? "Énergie" : reason?.title ?? "Pilier"}
+          mobileNavigation={true}
+        />
       </ValueProposition>
 
       <Divider />
@@ -157,23 +101,12 @@ export default function HomePage() {
           title="Nos Offres de Services"
           subtitle="Toutes nos solutions sont basées sur un modèle gagnant-gagnant, conçu pour maximiser vos profits tout en minimisant vos responsabilités dans les limites de nos modèles de rentabilité."
         />
-        {/* Desktop: normal grid */}
-        <div className="hidden md:grid md:grid-cols-3 gap-8">
-          {solutions.map((solution, index) => (
-            <SolutionCard key={index} solution={solution} />
-          ))}
-        </div>
-
-        {/* Mobile: horizontal scroll */}
-        <div className="md:hidden">
-          <div className="flex overflow-x-auto gap-6 px-4 pb-4 snap-x snap-mandatory scrollbar-hide -mx-4">
-            {solutions.map((solution, index) => (
-              <div key={index} className="flex-none w-80 snap-center">
-                <SolutionCard solution={solution} />
-              </div>
-            ))}
-          </div>
-        </div>
+        <ResponsiveCardGrid
+          items={solutions}
+          renderCard={(solution, index) => <SolutionCard key={index} solution={solution} />}
+          cardWidth="w-80"
+          mobileNavigation={true}
+        />
       </Services>
 
       <Divider />
@@ -184,85 +117,23 @@ export default function HomePage() {
           subtitle="De la consultation à l’installation en seulement 3 étapes simples."
         />
         
-        {/* Desktop: normal grid */}
-        <div className="hidden md:grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          <Card background="surface-primary" hover>
-            <CardContent className="p-6 text-center">
-              <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-inverseText">1</span>
-              </div>
-              <h3 className="text-xl font-bold text-primaryText mb-4">Remplir le Formulaire</h3>
-              <p className="text-secondaryText">
-                Parlez-nous de votre emplacement, de l'achalandage et de vos préférences. Nous voulons cerner vos besoins et votre réalité.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card background="surface-primary" hover>
-            <CardContent className="p-6 text-center">
-              <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-inverseText">2</span>
-              </div>
-              <h3 className="text-xl font-bold text-primaryText mb-4">Personnalisation du Service</h3>
-              <p className="text-secondaryText">
-                Nous vous contactons pour discuter des options de produits et des modalités de service pour trouver une formule gagnante-gagnante.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card background="surface-primary" hover>
-            <CardContent className="p-6 text-center">
-              <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-inverseText">3</span>
-              </div>
-              <h3 className="text-xl font-bold text-primaryText mb-4">Installation en 3 semaines</h3>
-              <p className="text-secondaryText">
-                Installation professionnelle, approvisionnement initial et configuration complétés en 3 semaines. Votre machine sera remplie et connectée dès le jour 1.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Mobile: horizontal scroll */}
-        <div className="md:hidden">
-          <div className="flex overflow-x-auto gap-6 px-4 pb-4 snap-x snap-mandatory scrollbar-hide -mx-4">
-            <Card background="surface-primary" hover className="flex-none w-80 snap-center">
+        <ResponsiveCardGrid
+          items={steps}
+          mobileNavigation={true}
+          renderCard={(step, index) => (
+            <Card key={index} background="surface-primary" hover>
               <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl font-bold text-inverseText">1</span>
+                <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto m-4">
+                  <span className="text-2xl font-bold text-inverseText">{step.step}</span>
                 </div>
-                <h3 className="text-xl font-bold text-primaryText mb-4">Remplir le Formulaire</h3>
-                <p className="text-secondaryText">
-                  Parlez-nous de votre emplacement, de l'achalandage et de vos préférences. Nous voulons cerner vos besoins et votre réalité.
-                </p>
+                <h3 className="text-xl font-bold text-primaryText mb-4">{step.title}</h3>
+                <p className="text-secondaryText">{step.desc}</p>
               </CardContent>
             </Card>
-
-            <Card background="surface-primary" hover className="flex-none w-80 snap-center">
-              <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl font-bold text-inverseText">2</span>
-                </div>
-                <h3 className="text-xl font-bold text-primaryText mb-4">Personnalisation du Service</h3>
-                <p className="text-secondaryText">
-                  Nous vous contactons pour discuter des options de produits et des modalités de service pour trouver une formule gagnante-gagnante.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card background="surface-primary" hover className="flex-none w-80 snap-center">
-              <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl font-bold text-inverseText">3</span>
-                </div>
-                <h3 className="text-xl font-bold text-primaryText mb-4">Installation en 3 semaines</h3>
-                <p className="text-secondaryText">
-                  Installation professionnelle, approvisionnement initial et configuration complétés en 3 semaines. Votre machine sera remplie et connectée dès le jour 1.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+          )}
+          cardWidth="w-80"
+          className="max-w-5xl mx-auto"
+        />
         
         <div className="text-center mt-12">
           <Button 
