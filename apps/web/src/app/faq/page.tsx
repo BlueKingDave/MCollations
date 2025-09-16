@@ -12,7 +12,7 @@ import { COMPANY_INFO } from '@/utils/constants'
 import { useContactModal } from '../contexts/ContactModalContext'
 
 export default function FAQPage() {
-  const iconMap = { Phone, Mail, MapPin, Clock }
+  const iconMap = { Phone, Mail, MapPin, Clock } as const
   const { openModal } = useContactModal()
 
   return (
@@ -68,7 +68,7 @@ export default function FAQPage() {
                 {COMPANY_INFO.contactInfo
                   .filter((info) => info.icon !== "MapPin")
                   .map((info, index) => {
-                    const IconComponent = iconMap[info.icon]
+                    const IconComponent = iconMap[info.icon as keyof typeof iconMap]
                     return (
                       <Card key={index}>
                         <CardContent className="p-6 text-center">
