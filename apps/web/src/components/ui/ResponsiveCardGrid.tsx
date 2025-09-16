@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import type { UIEvent, CSSProperties } from 'react'
+import type { UIEvent } from 'react'
 
 interface ResponsiveCardGridProps<T> {
   items: T[]
@@ -33,16 +33,14 @@ export default function ResponsiveCardGrid<T>({
   const handleScroll = useCallback(
     (event: UIEvent<HTMLDivElement>) => {
       const el = event.currentTarget
-      const containerRect = el.getBoundingClientRect()
-      const containerCenter = containerRect.left + containerRect.width / 2
+      const containerCenter = el.scrollLeft + el.clientWidth / 2
 
       let closestIndex = activeIndex
       let smallestDistance = Number.POSITIVE_INFINITY
 
       Array.from(el.children).forEach((child, index) => {
         const childElement = child as HTMLElement
-        const childRect = childElement.getBoundingClientRect()
-        const childCenter = childRect.left + childRect.width / 2
+        const childCenter = childElement.offsetLeft + childElement.offsetWidth / 2
         const distance = Math.abs(childCenter - containerCenter)
         if (distance < smallestDistance) {
           smallestDistance = distance
@@ -62,13 +60,9 @@ export default function ResponsiveCardGrid<T>({
       const targetChild = container.children[index] as HTMLElement | undefined
       if (!targetChild) return
 
-      const containerRect = container.getBoundingClientRect()
-      const childRect = targetChild.getBoundingClientRect()
-      const containerCenter = containerRect.left + containerRect.width / 2
-      const childCenter = childRect.left + childRect.width / 2
-      const delta = childCenter - containerCenter
-
-      const targetLeft = container.scrollLeft + delta
+      const targetLeft =
+        targetChild.offsetLeft -
+        (container.clientWidth - targetChild.offsetWidth) / 2
       const boundedTarget = Math.max(
         0,
         Math.min(targetLeft, container.scrollWidth - container.clientWidth)
@@ -118,7 +112,7 @@ export default function ResponsiveCardGrid<T>({
         const firstCard = container.children[0] as HTMLElement | undefined
         if (firstCard) resizeObserver.observe(firstCard)
       } else {
-        window.addEventListener('resize', calculatePadding)
+        (window as Window).addEventListener('resize', calculatePadding)
       }
     }
 
@@ -199,24 +193,12 @@ export default function ResponsiveCardGrid<T>({
           >
             {items.map((item, index) => {
               const isActive = index === activeIndex
-              const marginAdjustments: CSSProperties = {}
-
-              if (desktopSidePadding > 0) {
-                if (index === 0) {
-                  marginAdjustments.marginLeft = `-${desktopSidePadding}px`
-                }
-                if (index === items.length - 1) {
-                  marginAdjustments.marginRight = `-${desktopSidePadding}px`
-                }
-              }
-
               return (
                 <div
                   key={index}
                   className={`flex-none ${cardWidth} cursor-pointer transition-transform duration-300 ease-out snap-center ${
                     isActive ? 'scale-100' : 'scale-95 opacity-80'
                   }`}
-                  style={marginAdjustments}
                   onClick={() => scrollToIndex(index)}
                 >
                   {renderCard(item, index)}
