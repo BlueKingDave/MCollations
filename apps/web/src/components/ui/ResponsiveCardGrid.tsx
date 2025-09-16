@@ -22,7 +22,7 @@ export default function ResponsiveCardGrid<T>({
   const [activeIndex, setActiveIndex] = useState<number>(0)
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
 
-  const CARD_WIDTH_RATIO = 0.72
+  const CARD_WIDTH_RATIO = 0.85
   const CARD_GAP_RATIO = 0.05
   const HORIZONTAL_PADDING_RATIO = (1 - CARD_WIDTH_RATIO) / 2
 
