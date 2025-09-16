@@ -87,6 +87,7 @@ export default function ProductsPage() {
       <Hero
         title="Nos Produits"
         subtitle="Une large sélection de collations, boissons et friandises pour satisfaire toutes les envies."
+        inlineLogoAnimation={true}
       />
 
       <Section background="surface-primary">

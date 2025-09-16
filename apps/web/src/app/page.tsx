@@ -234,43 +234,11 @@ export default function HomePage() {
             <p className="text-secondaryText leading-relaxed">
               En moins d'un an, nous sommes devenus le partenaire de confiance d'Arénas, d'écoles et d'entreprises de toutes tailles dans la région. Petit à gros volume, nous avons la solution adaptée à vos besoins.
             </p>
-            
-{/*             <div className="grid md:grid-cols-2 gap-6 mt-8">
-              <div className="text-center p-4 bg-surface-secondary rounded-lg">
-                <div className="text-2xl font-bold text-secondary mb-2">15+</div>
-                <div className="text-sm text-secondaryText">années d’expérience</div>
-              </div>
-              <div className="text-center p-4 bg-surface-secondary rounded-lg">
-                <div className="text-2xl font-bold text-secondary mb-2">500+</div>
-                <div className="text-sm text-secondaryText">clients satisfaits</div>
-              </div>
-            </div> */}
-          </div>
-          
-          <div className="space-y-4">
-            <Card background="surface-primary" hover>
-              <CardContent className="pt-4 px-6 pb-4">
-                <h4 className="font-bold text-primaryText mb-2">Jeunesse assumée</h4>
-                <p className="text-secondaryText text-sm">Notre force, c'est notre énergie et notre flexibilité. Nous innovons dans un secteur qui avait besoin de modernité et de transparence, en plaçant les besoins des clients au cœur de nos solutions.</p>
-              </CardContent>
-            </Card>
-            <Card background="surface-primary" hover>
-              <CardContent className="pt-4 px-6 pb-4">
-                <h4 className="font-bold text-primaryText mb-2">Engagement</h4>
-                <p className="text-secondaryText text-sm">Chez M. Collations, l'implication directe du propriétaire fait toute la différence. Animé par le désir de bien faire, Étienne s'investit personnellement dans chaque projet pour comprendre vos besoins, offrir un service authentique et bâtir des liens durables. </p>
-              </CardContent>
-            </Card>
-            <Card background="surface-primary" hover>
-              <CardContent className="pt-4 px-6 pb-4">
-                <h4 className="font-bold text-primaryText mb-2">Professionnalisme</h4>
-                <p className="text-secondaryText text-sm">Avec nos inventaires en ligne et nos systèmes intelligents, nous anticipons vos besoins. Nos données nous permettent de sélectionner les collations les plus adaptées selon votre emplacement et d'offrir une expérience simple et fiable.</p>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </AboutUs>
 
-      <SocialProof background="surface-primary">
+      <SocialProof background="surface-primary" className="pt-0">
 {/*         <SectionHeader 
           title="Ce que disent nos clients"
           subtitle="Des entreprises locales, des écoles et des arénas nous font confiance — et leur nombre grandit chaque mois !"

@@ -75,6 +75,7 @@ export default function ServicesPage() {
       <Hero
         title="Nos Services"
         subtitle="Solutions complètes de machines distributrices conçues pour répondre aux besoins de votre entreprise."
+        inlineLogoAnimation={true}
       />
 
       <Section background="surface-primary">

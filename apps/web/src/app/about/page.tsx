@@ -4,75 +4,78 @@ import Hero from '@/components/ui/Hero'
 import Section, { SectionHeader } from '@/components/ui/Section'
 import ValueCard from '@/components/business/ValueCard'
 import TeamMemberCard from '@/components/business/TeamMemberCard'
+import CompanyLogoCard from '@/components/business/CompanyLogoCard'
+import ResponsiveCardGrid from '@/components/ui/ResponsiveCardGrid'
+import { companyLogos } from '@/utils/data'
 
 export default function AboutPage() {
   const teamMembers = [
     {
-      name: "John Smith",
+      name: "Étienne Lacerte",
       role: "PDG et Fondateur",
-      bio: "Plus de 20 ans d'expérience dans l'industrie des distributeurs automatiques.",
-      image: "/api/placeholder/300/300"
+      bio: "Passionné par l'entrepreneuriat et le service client, coach au collège de Lévis depuis 2015, étienne fut chargé de plusieurs projet dans son parcours académique et professionnel. M.Collations est le fruit de sa connexion entre le monde du sport et celui des affaires.",
+      image: "/images/teamMembers/etienne.png"
     },
     {
-      name: "Lisa Wong",
+      name: "Billy Lemay",
       role: "Directrice des Opérations",
-      bio: "Experte en logistique et excellence du service client.",
-      image: "/api/placeholder/300/300"
+      bio: "Ami d'Étienne depuis toujours, Billy aide à gérer et conceptualiser les opérations quotidiennes de M.Collation, assurant que chaque client reçoit un service exceptionnel.",
+      image: "/images/teamMembers/billy.png"
     },
     {
-      name: "David Rodriguez",
-      role: "Directeur Technique",
-      bio: "Dirige notre équipe de maintenance et de support technique.",
-      image: "/api/placeholder/300/300"
+      name: "Louise Lacerte",
+      role: "Supportrice Inconditionnelle",
+      bio: "Derrière chaque entrepreneur se trouve un parent dévoué. Louise, la mère d'Étienne, a toujours cru en lui et l'a soutenu à chaque étape de son parcours.",
+      image: "/images/teamMembers/louise.png"
+    },
+    {
+      name: "David Roy-Blouin",
+      role: "Consultant et Developpeur Web",
+      bio: "Aussi ami d'Étienne depuis toujours, avec sa passion pour le monde des affaires et du web David soutien Étienne avec la présence en ligne de M.Collation et son bon développement.",
+      image: "/images/teamMembers/david.png"
     }
   ]
 
   const values = [
     {
-      title: "Qualité d'Abord",
-      description: "Nous nous associons uniquement avec des fabricants de distributeurs automatiques de premier plan et des marques de collations premium."
+      title: "Jeunesse assumée",
+      description: "Notre force, c'est notre énergie et notre flexibilité. Nous innovons dans un secteur qui avait besoin de modernité et de transparence, en plaçant les besoins des clients au cœur de nos solutions."
     },
     {
-      title: "Focus Client",
-      description: "Votre satisfaction est notre priorité. Nous fournissons un service et un support personnalisés."
+      title: "Engagement",
+      description: "Chez M. Collations, l'implication directe du propriétaire fait toute la différence. Animé par le désir de bien faire, Étienne s'investit personnellement dans chaque projet pour comprendre vos besoins, offrir un service authentique et bâtir des liens durables."
     },
     {
-      title: "Innovation",
-      description: "Nous adoptons les nouvelles technologies pour fournir les meilleures solutions de distribution disponibles."
+      title: "Professionnalisme",
+      description: "Avec nos inventaires en ligne et nos systèmes intelligents, nous anticipons vos besoins. Nos données nous permettent de sélectionner les collations les plus adaptées selon votre emplacement et d'offrir une expérience simple et fiable."
     },
-    {
-      title: "Fiabilité",
-      description: "Comptez sur nous pour un service cohérent, une maintenance ponctuelle et un support fiable."
-    }
+
   ]
 
   return (
     <>
       <Hero
         title="À Propos de M.Collation"
-        subtitle="Votre partenaire de confiance en services de distributeurs automatiques premium depuis 2010."
+        subtitle="Votre partenaire de confiance en services de machines distributrices à Québec et Lévis."
+        inlineLogoAnimation={true}
       />
 
       <Section background="surface-primary">
         <SectionHeader
           title="Notre Histoire"
-          subtitle="Construite sur une base de service de qualité et de satisfaction client."
+          subtitle="Construite avec des amis, pour servirs nos clients comme des amis."
         />
 
         <div className="max-w-4xl mx-auto text-lg text-secondaryText space-y-6">
           <p>
-            Fondée en 2010, M.Collation a commencé avec une mission simple : fournir aux entreprises
-            des services de distributeurs automatiques de haute qualité qui améliorent la satisfaction
-            au travail et génèrent des flux de revenus supplémentaires.
+           Fondée en juillet 2024, M.Collations doit son succès à l'aide d'amis, de la famille et des nombreux contacts qu'Étienne s'est fait par son intérêt pas étaignable envers les gens qu'il cotoie.
           </p>
           <p>
-            Au fil des années, nous avons évolué d'une petite opération locale à un partenaire de
-            confiance servant des centaines d'entreprises dans la région. Notre succès repose sur
-            notre engagement envers des produits de qualité, un service fiable et la satisfaction client.
+            Le premier client de M.Collations était le directeur avec qui étienne a coaché durant 12 ans. Il lui a fait confiance et la qualité du service offert à donné la place à 7 emplacement à haut volume en moins d'un an.
           </p>
           <p>
             Aujourd'hui, nous continuons d'innover et d'étendre nos services, incorporant les dernières
-            technologies et tendances pour fournir à nos clients les meilleures solutions de distribution possibles.
+            technologies et tendances pour fournir à nos clients les meilleures solutions de machines distributrices possibles.
           </p>
         </div>
       </Section>
@@ -83,11 +86,19 @@ export default function AboutPage() {
           subtitle="Les principes qui guident tout ce que nous faisons."
         />
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {values.map((value, index) => (
-            <ValueCard key={index} value={value} />
-          ))}
+        <ResponsiveCardGrid
+          items={values}
+          renderCard={(value, index) => <ValueCard key={index} value={value} />}
+          getItemTitle={(value) => value.title}
+          mobileNavigation={true}
+        />
+      </Section>
+
+      <Section background="surface-primary" className="pt-8">
+        <div className="text-center mb-8">
+          <h3 className="text-xl font-semibold text-primaryText">Les plus grandes organisations d'ici nous font confiance</h3>
         </div>
+        <CompanyLogoCard companies={companyLogos} />
       </Section>
 
       <Section background="surface-primary">
@@ -96,11 +107,12 @@ export default function AboutPage() {
           subtitle="Les professionnels dévoués derrière le succès de M.Collation."
         />
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {teamMembers.map((member, index) => (
-            <TeamMemberCard key={index} member={member} />
-          ))}
-        </div>
+        <ResponsiveCardGrid
+          items={teamMembers}
+          renderCard={(member, index) => <TeamMemberCard key={index} member={member} />}
+          getItemTitle={(member) => member.name}
+          mobileNavigation={true}
+        />
       </Section>
     </>
   )

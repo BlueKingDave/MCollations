@@ -20,6 +20,8 @@ type LayoutParams = {
   rightOverhangPx: number
 }
 
+const SHRINK_SCROLL_THRESHOLD = 0;
+
 export default function InlineLogoAnimation() {
   const pathname = usePathname()
   const isHomePage = pathname === '/'
@@ -143,6 +145,40 @@ export default function InlineLogoAnimation() {
 
   const setShrunkCSS = (shrunk: boolean) => {
     document.documentElement.style.setProperty('--logo-shrunk', shrunk ? '1' : '0')
+  }
+
+
+  const getScrollOffset = () => {
+    if (typeof window === 'undefined') return 0
+    return window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0
+  }
+
+  const snapToHeader = () => {
+    const header = metrics.current.header
+    if (!header) return
+    stopAnimations()
+    ax.set(header.x)
+    ay.set(header.y)
+    as.set(header.scale)
+    ghostOpacity.set(0)
+    ghostW.set(0)
+    ghostH.set(0)
+    setShrunkCSS(true)
+  }
+
+  const syncStateToScroll = (offset: number) => {
+    if (offset <= SHRINK_SCROLL_THRESHOLD) return
+    // Ensure we are working with fresh measurements
+    measure()
+    const header = metrics.current.header
+    if (!header) return
+
+    setReady(true)
+    setHasScrolled(true)
+    setMode('shrunk')
+    setShrunkCSS(true)
+    snapToHeader()
+    isShrinkingRef.current = false
   }
 
   // (removed unused initializePositions)
