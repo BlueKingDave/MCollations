@@ -18,6 +18,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "M. Collations - Machines distributrices à Québec et Lévis",
   description: "Service de machines distributrices clé en main avec collations fraîches pour entreprises, écoles et arénas à Québec et Lévis. Installation rapide et service fiable.",
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({

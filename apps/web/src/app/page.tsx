@@ -157,10 +157,22 @@ export default function HomePage() {
           title="Nos Offres de Services"
           subtitle="Toutes nos solutions sont basées sur un modèle gagnant-gagnant, conçu pour maximiser vos profits tout en minimisant vos responsabilités dans les limites de nos modèles de rentabilité."
         />
-        <div className="grid md:grid-cols-3 gap-8">
+        {/* Desktop: normal grid */}
+        <div className="hidden md:grid md:grid-cols-3 gap-8">
           {solutions.map((solution, index) => (
             <SolutionCard key={index} solution={solution} />
           ))}
+        </div>
+
+        {/* Mobile: horizontal scroll */}
+        <div className="md:hidden">
+          <div className="flex overflow-x-auto gap-6 px-4 pb-4 snap-x snap-mandatory scrollbar-hide -mx-4">
+            {solutions.map((solution, index) => (
+              <div key={index} className="flex-none w-80 snap-center">
+                <SolutionCard solution={solution} />
+              </div>
+            ))}
+          </div>
         </div>
       </Services>
 
@@ -172,35 +184,83 @@ export default function HomePage() {
           subtitle="De la consultation à l’installation en seulement 3 étapes simples."
         />
         
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl font-bold text-inverseText">1</span>
-            </div>
-            <h3 className="text-xl font-bold text-primaryText mb-4">Remplir le Formulaire</h3>
-            <p className="text-secondaryText">
-              Parlez-nous de votre emplacement, de l’achalandage et de vos préférences. Nous voulons cerner vos besoins et votre réalité.
-            </p>
-          </div>
-          
-          <div className="text-center">
-            <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl font-bold text-inverseText">2</span>
-            </div>
-            <h3 className="text-xl font-bold text-primaryText mb-4">Personnalisation du Service</h3>
-            <p className="text-secondaryText">
-              Nous vous contactons pour discuter des options de produits et des modalités de service pour trouver une formule gagnante-gagnante.
-            </p>
-          </div>
+        {/* Desktop: normal grid */}
+        <div className="hidden md:grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <Card background="surface-primary" hover>
+            <CardContent className="p-6 text-center">
+              <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-inverseText">1</span>
+              </div>
+              <h3 className="text-xl font-bold text-primaryText mb-4">Remplir le Formulaire</h3>
+              <p className="text-secondaryText">
+                Parlez-nous de votre emplacement, de l'achalandage et de vos préférences. Nous voulons cerner vos besoins et votre réalité.
+              </p>
+            </CardContent>
+          </Card>
 
-          <div className="text-center">
-            <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl font-bold text-inverseText">3</span>
-            </div>
-            <h3 className="text-xl font-bold text-primaryText mb-4">Installation en 3 semaines</h3>
-            <p className="text-secondaryText">
-              Installation professionnelle, approvisionnement initial et configuration complétés en 3 semaines. Votre machine sera remplie et connectée dès le jour 1.
-            </p>
+          <Card background="surface-primary" hover>
+            <CardContent className="p-6 text-center">
+              <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-inverseText">2</span>
+              </div>
+              <h3 className="text-xl font-bold text-primaryText mb-4">Personnalisation du Service</h3>
+              <p className="text-secondaryText">
+                Nous vous contactons pour discuter des options de produits et des modalités de service pour trouver une formule gagnante-gagnante.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card background="surface-primary" hover>
+            <CardContent className="p-6 text-center">
+              <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-inverseText">3</span>
+              </div>
+              <h3 className="text-xl font-bold text-primaryText mb-4">Installation en 3 semaines</h3>
+              <p className="text-secondaryText">
+                Installation professionnelle, approvisionnement initial et configuration complétés en 3 semaines. Votre machine sera remplie et connectée dès le jour 1.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Mobile: horizontal scroll */}
+        <div className="md:hidden">
+          <div className="flex overflow-x-auto gap-6 px-4 pb-4 snap-x snap-mandatory scrollbar-hide -mx-4">
+            <Card background="surface-primary" hover className="flex-none w-80 snap-center">
+              <CardContent className="p-6 text-center">
+                <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl font-bold text-inverseText">1</span>
+                </div>
+                <h3 className="text-xl font-bold text-primaryText mb-4">Remplir le Formulaire</h3>
+                <p className="text-secondaryText">
+                  Parlez-nous de votre emplacement, de l'achalandage et de vos préférences. Nous voulons cerner vos besoins et votre réalité.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card background="surface-primary" hover className="flex-none w-80 snap-center">
+              <CardContent className="p-6 text-center">
+                <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl font-bold text-inverseText">2</span>
+                </div>
+                <h3 className="text-xl font-bold text-primaryText mb-4">Personnalisation du Service</h3>
+                <p className="text-secondaryText">
+                  Nous vous contactons pour discuter des options de produits et des modalités de service pour trouver une formule gagnante-gagnante.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card background="surface-primary" hover className="flex-none w-80 snap-center">
+              <CardContent className="p-6 text-center">
+                <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl font-bold text-inverseText">3</span>
+                </div>
+                <h3 className="text-xl font-bold text-primaryText mb-4">Installation en 3 semaines</h3>
+                <p className="text-secondaryText">
+                  Installation professionnelle, approvisionnement initial et configuration complétés en 3 semaines. Votre machine sera remplie et connectée dès le jour 1.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </div>
         
@@ -317,19 +377,19 @@ export default function HomePage() {
           </div>
           
           <div className="space-y-4">
-            <Card background="surface-primary">
+            <Card background="surface-primary" hover>
               <CardContent className="pt-4 px-6 pb-4">
                 <h4 className="font-bold text-primaryText mb-2">Jeunesse assumée</h4>
                 <p className="text-secondaryText text-sm">Notre force, c'est notre énergie et notre flexibilité. Nous innovons dans un secteur qui avait besoin de modernité et de transparence, en plaçant les besoins des clients au cœur de nos solutions.</p>
               </CardContent>
             </Card>
-            <Card background="surface-primary">
+            <Card background="surface-primary" hover>
               <CardContent className="pt-4 px-6 pb-4">
                 <h4 className="font-bold text-primaryText mb-2">Engagement</h4>
                 <p className="text-secondaryText text-sm">Chez M. Collations, l'implication directe du propriétaire fait toute la différence. Animé par le désir de bien faire, Étienne s'investit personnellement dans chaque projet pour comprendre vos besoins, offrir un service authentique et bâtir des liens durables. </p>
               </CardContent>
             </Card>
-            <Card background="surface-primary">
+            <Card background="surface-primary" hover>
               <CardContent className="pt-4 px-6 pb-4">
                 <h4 className="font-bold text-primaryText mb-2">Professionnalisme</h4>
                 <p className="text-secondaryText text-sm">Avec nos inventaires en ligne et nos systèmes intelligents, nous anticipons vos besoins. Nos données nous permettent de sélectionner les collations les plus adaptées selon votre emplacement et d'offrir une expérience simple et fiable.</p>
