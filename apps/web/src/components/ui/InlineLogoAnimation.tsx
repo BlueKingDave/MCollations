@@ -1,8 +1,9 @@
 'use client'
 
-import { useLayoutEffect, useEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useEffect, useRef, useState, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
 import { motion, useScroll, useMotionValue, animate, useMotionValueEvent } from 'framer-motion'
+import type { KeyboardEvent } from 'react'
 
 const logoUrl = '/images/general/LogoSVGai.svg'
 
@@ -95,6 +96,7 @@ export default function InlineLogoAnimation() {
     }
   }
   const ghostActive = ready
+  const ghostInteractive = ghostActive && mode === 'ghost'
 
   // No separate overlay top; float + shape-outside handles wrap
 
@@ -293,6 +295,64 @@ export default function InlineLogoAnimation() {
     }
   }
 
+  const shrinkToHeader = useCallback(() => {
+    if (!ready) return
+    if (mode === 'shrunk' || mode === 'toHeader') return
+
+    setHasScrolled(true)
+    setMode('toHeader')
+    stopAnimations()
+    setShrunkCSS(true)
+    isShrinkingRef.current = true
+    roGhostRef.current?.disconnect?.()
+    roTextRef.current?.disconnect?.()
+
+    requestAnimationFrame(() => {
+      measure()
+
+      const reobserve = () => {
+        const headerArea = document.querySelector('[data-header-logo-area]')
+        const ghostLogo = document.querySelector('[data-ghost-logo-el]')
+        const textBlock = document.querySelector('[data-hero-text-block]')
+        if (roHeaderRef.current && headerArea) roHeaderRef.current.observe(headerArea)
+        if (roGhostRef.current && ghostLogo) roGhostRef.current.observe(ghostLogo)
+        if (roTextRef.current && textBlock) roTextRef.current.observe(textBlock)
+        isShrinkingRef.current = false
+      }
+
+      const targets = metrics.current.header
+      if (!targets || typeof targets.x !== 'number' || typeof targets.y !== 'number') {
+        reobserve()
+        return
+      }
+
+      const fade = animate(ghostOpacity, 0, { duration: 0, ease: 'easeInOut' })
+      const collapseW = animate(ghostW, 0, { duration: 0.6, ease: 'easeInOut' })
+      const collapseH = animate(ghostH, 0, { duration: 0.6, ease: 'easeInOut' })
+      ghostAnimControls.current = [fade, collapseW, collapseH]
+
+      axAnim.current = animate(ax, targets.x, { duration: 0.6, ease: 'easeInOut' })
+      ayAnim.current = animate(ay, targets.y, { duration: 0.6, ease: 'easeInOut' })
+      asAnim.current = animate(as, targets.scale, { duration: 0.6, ease: 'easeInOut' })
+
+      const animationPromises = [
+        axAnim.current?.finished ?? Promise.resolve(),
+        ayAnim.current?.finished ?? Promise.resolve(),
+        asAnim.current?.finished ?? Promise.resolve(),
+        ...ghostAnimControls.current.map((control) => control.finished),
+      ]
+
+      Promise.all(animationPromises)
+        .then(() => {
+          setMode('shrunk')
+          reobserve()
+        })
+        .catch(() => {
+          reobserve()
+        })
+    })
+  }, [ready, mode, stopAnimations, measure, setHasScrolled, setMode, setShrunkCSS])
+
   useLayoutEffect(() => {
     measure()
     scheduleStabilize()
@@ -352,57 +412,8 @@ export default function InlineLogoAnimation() {
     const shouldShrink = v > 0
 
     // To header
-    if (shouldShrink && mode !== 'shrunk' && mode !== 'toHeader') {
-      setHasScrolled(true)
-      setMode('toHeader')
-      stopAnimations()
-      setShrunkCSS(true)
-      isShrinkingRef.current = true
-      roGhostRef.current?.disconnect?.()
-      roTextRef.current?.disconnect?.()
-
-      requestAnimationFrame(() => {
-        measure()
-        const targets = metrics.current.header
-        if (!targets || typeof targets.x !== 'number' || typeof targets.y !== 'number') return
-
-        const fade = animate(ghostOpacity, 0, { duration: 0, ease: 'easeInOut' })
-        const collapseW = animate(ghostW, 0, { duration: 0.6, ease: 'easeInOut' })
-        const collapseH = animate(ghostH, 0, { duration: 0.6, ease: 'easeInOut' })
-        ghostAnimControls.current = [fade, collapseW, collapseH]
-
-        axAnim.current = animate(ax, targets.x, { duration: 0.6, ease: 'easeInOut' })
-        ayAnim.current = animate(ay, targets.y, { duration: 0.6, ease: 'easeInOut' })
-        asAnim.current = animate(as, targets.scale, { duration: 0.6, ease: 'easeInOut' })
-
-        const animationPromises = [
-          axAnim.current?.finished ?? Promise.resolve(),
-          ayAnim.current?.finished ?? Promise.resolve(),
-          asAnim.current?.finished ?? Promise.resolve(),
-          ...ghostAnimControls.current.map((control) => control.finished),
-        ]
-
-        Promise.all(animationPromises)
-          .then(() => {
-            setMode('shrunk')
-            const headerArea = document.querySelector('[data-header-logo-area]')
-            const ghostLogo = document.querySelector('[data-ghost-logo-el]')
-            const textBlock = document.querySelector('[data-hero-text-block]')
-            if (roHeaderRef.current && headerArea) roHeaderRef.current.observe(headerArea)
-            if (roGhostRef.current && ghostLogo) roGhostRef.current.observe(ghostLogo)
-            if (roTextRef.current && textBlock) roTextRef.current.observe(textBlock)
-            isShrinkingRef.current = false
-          })
-          .catch(() => {
-            const headerArea = document.querySelector('[data-header-logo-area]')
-            const ghostLogo = document.querySelector('[data-ghost-logo-el]')
-            const textBlock = document.querySelector('[data-hero-text-block]')
-            if (roHeaderRef.current && headerArea) roHeaderRef.current.observe(headerArea)
-            if (roGhostRef.current && ghostLogo) roGhostRef.current.observe(ghostLogo)
-            if (roTextRef.current && textBlock) roTextRef.current.observe(textBlock)
-            isShrinkingRef.current = false
-          })
-      })
+    if (shouldShrink) {
+      shrinkToHeader()
       return
     }
 
@@ -535,6 +546,21 @@ export default function InlineLogoAnimation() {
     }
   })
 
+  const handleGhostActivate = useCallback(() => {
+    if (!ghostInteractive) return
+    shrinkToHeader()
+  }, [ghostInteractive, shrinkToHeader])
+
+  const handleGhostKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault()
+        handleGhostActivate()
+      }
+    },
+    [handleGhostActivate]
+  )
+
   // Render when included on any page
 
   return (
@@ -545,7 +571,7 @@ export default function InlineLogoAnimation() {
         className="float-right"
         style={{
           opacity: ghostOpacity,
-          pointerEvents: ghostActive ? 'auto' : 'none',
+          pointerEvents: ghostInteractive ? 'auto' : 'none',
           position: ghostActive ? 'static' : 'absolute',
           left: ghostActive ? 'auto' : '-99999px',
           top: ghostActive ? 'auto' : '-99999px',
@@ -563,7 +589,15 @@ export default function InlineLogoAnimation() {
         aria-hidden="true"
       >
         <motion.div
-          style={{ filter: 'drop-shadow(0px 2px 6px rgba(0,0,0,0.2))' }}
+          style={{
+            filter: 'drop-shadow(0px 2px 6px rgba(0,0,0,0.2))',
+            cursor: ghostInteractive ? 'pointer' : 'default'
+          }}
+          role="button"
+          tabIndex={ghostInteractive ? 0 : -1}
+          aria-label="Réduire le logo"
+          onClick={handleGhostActivate}
+          onKeyDown={handleGhostKeyDown}
           whileHover={{
             scale: 1.03,
             y: -2,

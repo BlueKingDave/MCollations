@@ -23,7 +23,6 @@ export default function ResponsiveCardGrid<T>({
   const [activeIndex, setActiveIndex] = useState<number>(0)
   const desktopScrollContainerRef = useRef<HTMLDivElement | null>(null)
   const mobileScrollContainerRef = useRef<HTMLDivElement | null>(null)
-  const [desktopSidePadding, setDesktopSidePadding] = useState(0)
 
   const CARD_WIDTH_RATIO = 0.90
   const CARD_GAP_RATIO = 0.05
@@ -81,49 +80,6 @@ export default function ResponsiveCardGrid<T>({
     },
     [scrollToCard]
   )
-
-  // Pad desktop carousel so the first/last cards can center cleanly
-  useEffect(() => {
-    const container = desktopScrollContainerRef.current
-    if (!container) return
-
-    const calculatePadding = () => {
-      const firstCard = container.children[0] as HTMLElement | undefined
-      if (!firstCard) {
-        setDesktopSidePadding(0)
-        return
-      }
-
-      const containerWidth = container.clientWidth
-      if (containerWidth === 0) return
-
-      const computedPadding = Math.max(0, (containerWidth - firstCard.offsetWidth) / 2)
-      setDesktopSidePadding(computedPadding)
-    }
-
-    calculatePadding()
-
-    let resizeObserver: ResizeObserver | null = null
-
-    if (typeof window !== 'undefined') {
-      if ('ResizeObserver' in window) {
-        resizeObserver = new window.ResizeObserver(calculatePadding)
-        resizeObserver.observe(container)
-        const firstCard = container.children[0] as HTMLElement | undefined
-        if (firstCard) resizeObserver.observe(firstCard)
-      } else {
-        (window as Window).addEventListener('resize', calculatePadding)
-      }
-    }
-
-    return () => {
-      if (resizeObserver) {
-        resizeObserver.disconnect()
-      } else if (typeof window !== 'undefined') {
-        window.removeEventListener('resize', calculatePadding)
-      }
-    }
-  }, [items.length, cardWidth])
 
   // Keep navigation dots in sync on mount when mobile navigation is enabled
   useEffect(() => {
@@ -184,12 +140,6 @@ export default function ResponsiveCardGrid<T>({
             ref={desktopScrollContainerRef}
             onScroll={handleScroll}
             className="flex overflow-x-auto gap-8 pb-4 scrollbar-hide snap-x snap-mandatory"
-            style={{
-              paddingLeft: `${desktopSidePadding}px`,
-              paddingRight: `${desktopSidePadding}px`,
-              scrollPaddingLeft: `${desktopSidePadding}px`,
-              scrollPaddingRight: `${desktopSidePadding}px`
-            }}
           >
             {items.map((item, index) => {
               const isActive = index === activeIndex
