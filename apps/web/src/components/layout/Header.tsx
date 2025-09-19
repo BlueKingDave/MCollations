@@ -105,9 +105,11 @@ export default function Header() {
           <div className="flex justify-between items-center py-6 relative gap-3 pr-2 lg:pr-0">
             {/* Logo / Title */}
             <div className="flex items-center h-12 flex-1 min-w-0" data-header-logo-area>
-              <h1
+              <Link
+                href="/"
+                aria-label="Retour à l'accueil M. Collations"
                 className="
-                  font-bold ml-2 relative group cursor-pointer
+                  inline-block font-bold ml-2 relative group cursor-pointer
                   whitespace-nowrap
                   text-4xl max-[450px]:text-3xl max-[370px]:text-2xl
                   transition-all duration-500 ease-in-out
@@ -122,7 +124,7 @@ export default function Header() {
                   <span className={`${currentTheme.titleMColorHover} transition-colors duration-700 ease-in-out`}>M.</span>
                   <span className={`${currentTheme.titleRestColorHover} transition-colors duration-700 ease-in-out`}>COLLATIONS</span>
                 </span>
-              </h1>
+              </Link>
             </div>
 
             {/* Desktop Nav */}
